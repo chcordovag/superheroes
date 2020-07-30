@@ -1,21 +1,16 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 
 @Injectable({
   providedIn: "root",
 })
 export class SuperheroesService {
   private url = "http://157.245.138.232:9091/api/v1/test/superheroes";
-  private superheroes: any[] = [];
 
-  constructor(private http: HttpClient) {
-    console.log("Servicio Superheroes.services cargado!");
-  }
+  constructor(private http: HttpClient) {}
 
-  getSuperheroesfromAPI(): any {
+  getSuperheroesfromAPI() {
     return this.http.get(this.url);
-
-    // console.log(respuesta)
   }
 
   getSuperheroebyID(id: string) {
@@ -23,10 +18,14 @@ export class SuperheroesService {
   }
 }
 
+// se declara interface para usar como tipo de dato en objetos y
+// arreglo de objetos de superheroes
 export interface Superheroe {
+  avatarURL: string;
+  descripcion: string;
+  habilidades: [];
   id: number;
   nombre: string;
   nombreReal: string;
   puedeVolar: boolean;
-  avatarURL: string;
 }

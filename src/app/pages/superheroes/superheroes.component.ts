@@ -11,67 +11,75 @@ import { HttpErrorResponse } from "@angular/common/http";
   styleUrls: ["./superheroes.component.css"],
 })
 export class SuperheroesComponent implements OnInit {
-  superHeroebyID = {};
-  allSuperheroes: any[] = [];
-  superheroesFinal: any[] = [];
+  superHeroeIdUno: Superheroe;
+  allSuperheroes: Superheroe[] = [];
+  superheroesFinal: Superheroe[] = [];
   superheroesFailed = false;
-  superheroesToShow: any[] = [];
+  superheroesToShow: Superheroe[] = [];
 
   constructor(public _superheroesService: SuperheroesService) {}
 
   ngOnInit(): void {
     this.getSuperheroeIDUno();
   }
-
+  // obtiene superheroe con id=1
+  // Llama a la funcion para obtener el listado completo de superheroes
   getSuperheroeIDUno() {
     const superheroeToFind = "1";
 
     this._superheroesService.getSuperheroebyID(superheroeToFind).subscribe(
       (resp: any) => {
-        this.superHeroebyID = resp.data;
+        this.superHeroeIdUno = resp.data;
 
+        // Si se obtiene respuesta, se consulta por la totalidad de superheroes
         this.getSuperheroesList();
 
-        if (this.superHeroebyID === null) {
+        // esto es para efectos de control. Si esta vació el arreglo, mostrará un error en HTML
+        if (this.superHeroeIdUno === null) {
           this.superheroesFailed = true;
         }
       },
+      // esto es para efectos de control. Si hay error en respuesta desde el servidor remoto, mostrará un error en HTML
       (err: HttpErrorResponse) => {
         this.superheroesFailed = true;
       }
     );
   }
 
+  // Obtiene el listado completo de superheroes.
+  // Llama a la funcion para crear el arreglo que se mostrará en el HTML
   getSuperheroesList() {
     this._superheroesService.getSuperheroesfromAPI().subscribe(
       (resp: any) => {
         this.allSuperheroes = resp.data;
-        // console.log(this.allSuperheroes);
+
+        // Si se obtiene respuesta, se creará un arreglo de objetos final.
         this.createFinalSuperheroes();
 
+        // esto es para efectos de control. Si esta vació el arreglo, mostrará un error en HTML
         if (this.allSuperheroes.length === 0) {
           this.superheroesFailed = true;
         }
-
-        // this.cargado = true;a
-        // return resp;
       },
+      // esto es para efectos de control. Si hay error en respuesta desde el servidor remoto, mostrará un error en HTML
       (err: HttpErrorResponse) => {
         this.superheroesFailed = true;
       }
     );
   }
 
+  // Crea el arreglo final que se mostrara en el HTML.
+  // Une el superheroe con id=1 + la lista de superheroes que pueden volar.
   createFinalSuperheroes() {
-    //agrega superheroe con id 1 a superheroes final
-    this.superheroesFinal.push(this.superHeroebyID);
+    // agrega superheroe con id 1 a superheroes final
+    this.superheroesFinal.push(this.superHeroeIdUno);
 
-    //filtra superheroes que pueden volar
-    let superheroesCanFly = this.allSuperheroes.filter(
+    // filtra superheroes que pueden volar
+    const superheroesCanFly = this.allSuperheroes.filter(
       (heroe) => heroe.puedeVolar === true
     );
 
-    //asigna superheroes que pueden volar a superheroes final
+    // asigna superheroes que pueden volar a superheroes final
     for (let superheroeCanFly of superheroesCanFly) {
       this.superheroesFinal.push(superheroeCanFly);
     }
@@ -79,22 +87,26 @@ export class SuperheroesComponent implements OnInit {
     this.superheroesToShow = this.superheroesFinal;
   }
 
+  // Busca superheroes por nombre.
+  // Modifica arreglo que se muestra en HTML
+
   buscarSuperheroes(termino: string) {
     termino = termino.toLowerCase();
-    let superheroesArr: any[] = [];
+    // se crea arreglo temporal para almacenar superheroes encontrados
+    const superheroesArr: Superheroe[] = [];
 
+    // recorre arreglo de objetos
     for (let i = 0; i < this.superheroesFinal.length; i++) {
-      let heroe = this.superheroesFinal[i];
-      const nombre = heroe.nombre.toLowerCase();
+      const superheroe = this.superheroesFinal[i];
+      const nombre = superheroe.nombre.toLowerCase();
 
+      // si nombre contiene el termino buscado, devuelve el indice del arreglo
+      // si no lo contiene devuelve -1
       if (nombre.indexOf(termino) >= 0) {
-        // heroe.idx = i;
-        superheroesArr.push(heroe);
+        superheroesArr.push(superheroe);
       }
     }
 
     this.superheroesToShow = superheroesArr;
-
-    console.log(this.superheroesToShow);
   }
 }

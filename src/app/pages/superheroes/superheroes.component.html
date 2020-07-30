@@ -24,8 +24,8 @@
                 Ha habido un error al cargar los superhéroes!
             </div>
 
-            <div *ngIf="superheroesToShow.length === 0" class="alert alert-danger" role="alert">
-                No hay superheroes que mostrar
+            <div *ngIf="superheroesToShow.length === 0 && !superheroesFailed" class="alert alert-danger" role="alert">
+                No hay Superhéroes que mostrar
             </div>
 
             <ul class="list-group list-group-flush">
