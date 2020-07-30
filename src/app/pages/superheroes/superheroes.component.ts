@@ -80,7 +80,7 @@ export class SuperheroesComponent implements OnInit {
     );
 
     // asigna superheroes que pueden volar a superheroes final
-    for (let superheroeCanFly of superheroesCanFly) {
+    for (const superheroeCanFly of superheroesCanFly) {
       this.superheroesFinal.push(superheroeCanFly);
     }
 
